@@ -26,14 +26,12 @@ const typeColors: Record<string, string> = {
 export default function PokemonCard({ pokemon }: PokemonCardProps) {
   return (
     <div className="max-w-sm mx-auto bg-slate-800 border-2 border-slate-600 rounded-3xl overflow-hidden shadow-2xl transform transition-all hover:scale-105 duration-300">
-      {/* Header with Name */}
       <div className="p-6 text-center">
         <h3 className="text-3xl font-black text-white uppercase tracking-tighter font-retro">
           {pokemon.name}
         </h3>
       </div>
 
-      {/* Image Container */}
       <div className="relative aspect-square bg-slate-900 mx-6 rounded-2xl border-b-4 border-slate-700 flex items-center justify-center p-4">
         <img
           src={pokemon.sprites.other["official-artwork"].front_default}
@@ -42,7 +40,6 @@ export default function PokemonCard({ pokemon }: PokemonCardProps) {
         />
       </div>
 
-      {/* Types Section */}
       <div className="p-6 flex justify-center gap-3">
         {pokemon.types.map((t) => (
           <span
