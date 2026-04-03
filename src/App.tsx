@@ -1,33 +1,36 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import SearchBar from "./components/SearchBar";
 import { fetchPokemonByName } from "./api/pokemon";
 import type { PokemonData } from "./types/pokemon.types";
+import { toast, Toaster } from "sonner";
+import PokemonCard from "./components/PokemonCard";
 
 function App() {
   const [search, setSearch] = useState<string>("");
   const [data, setData] = useState<PokemonData | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false); // The boolean is inferred, but good practice to explicitly type it while learning
-
-  useEffect(() => {
-    if (!error) return;
-
-    const timer = setTimeout(() => {
-      setError(null);
-    }, 3000);
-
-    return () => clearTimeout(timer);
-  }, [error]);
 
   const handleSearch = async (e: React.SyntheticEvent) => {
     e.preventDefault();
 
     if (!search.trim()) {
-      setError("Please enter a Pokémon name.");
+      toast.error("Empty Search", {
+        description: "Please enter a Pokémon name.",
+        style: {
+          backgroundColor: "#fee2e2", // red-100
+          borderColor: "#f87171", // red-400
+          borderWidth: "2px",
+          // ADD THESE TO OVERRIDE THE TEXT COLORS:
+          color: "#b91c1c", // red-700 for the title
+        },
+        classNames: {
+          icon: "text-red-700",
+        },
+      });
+
       return;
     }
 
-    setError(null);
     setData(null);
     setLoading(true);
 
@@ -37,7 +40,20 @@ function App() {
       setData(result);
     } catch (err) {
       console.error(err);
-      setError("Pokemon not found. Please check the spelling.");
+      toast.error("Not Found", {
+        description: "Pokemon not found. Please check the spelling.",
+        style: {
+          backgroundColor: "#fee2e2",
+          borderColor: "#f87171",
+          borderWidth: "2px",
+          color: "#b91c1c",
+        },
+        classNames: {
+          title: "font-black text-xl tracking-tight font-sans",
+          description: "text-red-600 font-semibold font-sans",
+          icon: "text-red-700",
+        },
+      });
     } finally {
       setLoading(false);
     }
@@ -52,11 +68,17 @@ function App() {
         sizes="32x32"
         type="image/png"
       />
-      <div className="min-h-dvh w-full bg-slate-700 flex flex-col justify-start">
-        <h1 className=" text-5xl font-bold text-center text-neutral-100 m-25 font-retro tracking-widest">
-          Welcome to PokeSearch
+      <div className="min-h-dvh h-full w-full bg-slate-700 flex flex-col justify-start pb-20">
+        {/* FIX 2: Reduced the massive 'm-25' (100px). 
+          Used 'mt-10 sm:mt-20' so it's tight on mobile but spaced on desktop.
+          Changed 'text-5xl' to 'text-3xl sm:text-5xl' for mobile readability.
+        */}
+        <h1 className="text-3xl sm:text-5xl font-bold text-center text-neutral-100 mt-10 sm:mt-20 mb-10 px-4 font-retro tracking-widest leading-tight">
+          Welcome to <br className="sm:hidden" /> PokeSearch
         </h1>
-        <div className="w-full py-10">
+
+        {/* FIX 3: Added horizontal padding so the search bar doesn't touch the screen edges */}
+        <div className="w-full px-4 py-6 sm:py-10">
           <SearchBar
             search={search}
             setSearch={setSearch}
@@ -64,31 +86,19 @@ function App() {
             loading={loading}
           />
         </div>
-        <h2 className="text-neutral-100 text-2xl font-semibold font-retro tracking-widest text-center">
-          Pokemon List
+
+        <h2 className="text-neutral-100 text-xl sm:text-2xl font-semibold font-retro tracking-widest text-center mb-6 sm:mb-10 px-4">
+          Search Result
         </h2>
-        {error && (
-          <div className="fixed bottom-10 right-10 z-50 max-w-sm bg-red-600 text-white px-6 py-4 rounded-xl shadow-2xl font-bold font-sans transition-all duration-300 ease-in-out border border-red-800">
-            <div className="flex items-center gap-3">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              {error}
-            </div>
-          </div>
-        )}
+
+        {/* The Card now has breathing room */}
+        <div className="px-4">{data && <PokemonCard pokemon={data} />}</div>
       </div>
+
+      {/* FIX 4: Moved Toaster to bottom-center for mobile UX. 
+        It's harder to reach the top-right on a phone.
+      */}
+      <Toaster position="bottom-center" richColors duration={3000} />
     </>
   );
 }
