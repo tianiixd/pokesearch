@@ -68,7 +68,7 @@ function App() {
         type="image/png"
       />
       <div className="min-h-dvh h-full w-full bg-slate-700 flex flex-col justify-start pb-20">
-        <h1 className="text-3xl sm:text-5xl font-bold text-center text-neutral-100 mt-10 sm:mt-20 mb-10 px-4 font-retro tracking-widest leading-tight">
+        <h1 className="text-xl sm:text-5xl font-bold text-center text-neutral-100 mt-10 sm:mt-20 mb-10 px-4 font-retro tracking-widest leading-tight">
           Welcome to <br className="sm:hidden" /> PokeSearch
         </h1>
 
